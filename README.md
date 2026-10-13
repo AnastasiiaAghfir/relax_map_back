@@ -1,211 +1,214 @@
 # RelaxMap — Backend API
 
-> Серверна платформа для каталогізації локацій для відпочинку: створення локацій, категоризація за типами та регіонами, система оцінок та відгуків користувачів.
+> **Note:** The backend is hosted on Render's free plan, which goes to sleep after a period of inactivity.
+> The first request may take up to a minute while the server wakes up — after that, the site works at normal speed.
 
-## 1. Про проєкт
+> A server platform for cataloguing places to relax: creating locations, categorising them by type and region, and a user rating and review system.
 
-**RelaxMap Backend** — це REST API на базі Node.js та Express, що забезпечує функціонування клієнтського застосунку для пошуку та оцінювання місць відпочинку.
+## 1. About the project
 
-Бізнес-завдання, що вирішує система:
+**RelaxMap Backend** is a REST API built with Node.js and Express that powers the client application for finding and rating places to relax.
 
-- централізоване ведення бази локацій з фото, описом, координатами та рейтингом;
-- структуризація контенту за типами та регіонами України;
-- формування довіри через верифіковані відгуки користувачів;
-- управління користувацьким профілем та авторським контентом.
+Business goals the system addresses:
 
-База даних: MongoDB (Mongoose). Авторизація: сесійна з ротацією токенів.
+- centralised management of a location database with photos, descriptions, coordinates and ratings;
+- structuring content by location type and by region of Ukraine;
+- building trust through verified user reviews;
+- managing user profiles and user-created content.
 
-## 2. Ключові можливості
+Database: MongoDB (Mongoose). Authorisation: session-based with token rotation.
 
-**Користувачі та доступ:**
+## 2. Key features
 
-- реєстрація та вхід за email / пароль;
-- сесійне оновлення токенів та безпечний вихід;
-- профіль користувача, перегляд чужих профілів;
-- оновлення імені та аватара.
+**Users and access:**
 
-**Локації:**
+- sign-up and login with email / password;
+- session-based token refresh and secure logout;
+- user profile and viewing other users' profiles;
+- updating name and avatar.
 
-- публічний каталог із пагінацією, пошуком, фільтрами та сортуванням;
-- детальна картка локації;
-- створення та редагування локацій авторизованими користувачами.
+**Locations:**
 
-**Зворотний зв'язок:**
+- public catalogue with pagination, search, filters and sorting;
+- detailed location card;
+- creating and editing locations by authorised users.
 
-- оцінка від 1 до 5 та текстовий відгук;
-- перегляд відгуків за локацією;
-- агрегований рейтинг та лічильник відгуків.
+**Feedback:**
 
-**Довідники:**
+- 1 to 5 rating and a text review;
+- viewing reviews for a location;
+- aggregated rating and review counter.
 
-- перелік типів локацій: `GET /api/categories/types`;
-- перелік регіонів: `GET /api/categories/regions`.
+**Reference data:**
 
-## 3. Технологічний стек
+- list of location types: `GET /api/categories/types`;
+- list of regions: `GET /api/categories/regions`.
 
-| Категорія      | Технологія                               |
+## 3. Tech stack
+
+| Category       | Technology                               |
 | -------------- | ---------------------------------------- |
 | Runtime        | Node.js, ES Modules                      |
 | HTTP Framework | Express 5                                |
-| БД / ODM       | MongoDB, Mongoose 9                      |
+| DB / ODM       | MongoDB, Mongoose 9                      |
 | Auth / Crypto  | bcrypt, crypto.randomUUID                |
-| Валідація      | Celebrate, Joi                           |
-| Файли          | Multer, Cloudinary SDK v2                |
-| Безпека        | Helmet, CORS, cookie-parser, http-errors |
-| Конфігурація   | dotenv                                   |
-| Логування      | pino-http, pino-pretty                   |
-| Якість коду    | ESLint, Prettier, EditorConfig           |
-| Dev-режим      | Nodemon                                  |
+| Validation     | Celebrate, Joi                           |
+| Files          | Multer, Cloudinary SDK v2                |
+| Security       | Helmet, CORS, cookie-parser, http-errors |
+| Configuration  | dotenv                                   |
+| Logging        | pino-http, pino-pretty                   |
+| Code quality   | ESLint, Prettier, EditorConfig           |
+| Dev mode       | Nodemon                                  |
 
-## 4. Архітектура проєкту
+## 4. Project architecture
 
 ```text
 src/
-├── server.js              # ініціалізація Express, CORS, маршрути, обробка помилок
-├── db/connectToMongoDB.js # підключення до MongoDB
-├── routes/                # визначення ендпоїнтів
-├── controllers/           # бізнес-логіка запитів
-├── services/              # сесії, користувачі, категорії
-├── models/                # Mongoose-схеми
-├── validations/           # Joi-схеми Celebrate
+├── server.js              # Express setup, CORS, routes, error handling
+├── db/connectToMongoDB.js # MongoDB connection
+├── routes/                # endpoint definitions
+├── controllers/           # request business logic
+├── services/              # sessions, users, categories
+├── models/                # Mongoose schemas
+├── validations/           # Celebrate Joi schemas
 ├── middleware/            # authenticate, multer, logger, errorHandler
-├── utils/                 # Cloudinary, Mongoose-хелпери
-└── constants/             # час життя токенів, regex, сортування
+├── utils/                 # Cloudinary, Mongoose helpers
+└── constants/             # token lifetimes, regex, sorting
 ```
 
-Принципи: тонкі маршрути, валідація на вході, сервісний шар для повторного використання, централізована обробка помилок.
+Principles: thin routes, input validation, a service layer for reuse, centralised error handling.
 
-## 5. Швидкий старт
+## 5. Quick start
 
-**Вимоги:** Node.js 20+, MongoDB 6+, акаунт Cloudinary, npm 10+.
+**Requirements:** Node.js 20+, MongoDB 6+, a Cloudinary account, npm 10+.
 
 ```bash
-# 1. Клонування
+# 1. Clone
 git clone https://github.com/stanislave-droid/relax_map.git
 cd relax_map_back
 
-# 2. Встановлення залежностей
+# 2. Install dependencies
 npm install
 
-# 3. Конфігурація оточення
+# 3. Configure the environment
 cp .env.example .env
-# заповніть значення згідно з розділом 6
+# fill in the values as described in section 6
 
-# 4. Запуск у режимі розробки
+# 4. Run in development mode
 npm run dev
 
-# 5. Запуск у продуктивному режимі
+# 5. Run in production mode
 npm start
 ```
 
-Сервер за замовчуванням: `https://relax-map-back-z38k.onrender.com/`.
+Default server: `https://relax-map-back-z38k.onrender.com/`.
 
-Перевірка довідників:
+Check the reference endpoints:
 
 ```bash
 curl https://relax-map-back-z38k.onrender.com/api/categories/types
 curl "https://relax-map-back-z38k.onrender.com/api/locations?page=1&limit=10"
 ```
 
-## 6. Змінні оточення
+## 6. Environment variables
 
-Файл `.env` (приклад — `.env.example`):
+`.env` file (see `.env.example`):
 
-| Змінна                  | Призначення                      | Обов'язкова |
-| ----------------------- | -------------------------------- | ----------- |
-| `PORT`                  | Порт HTTP-сервера, напр. `3000`  | Так         |
-| `NODE_ENV`              | `development` / `production`     | Так         |
-| `MONGO_URL`             | Рядок підключення MongoDB        | Так         |
-| `FRONTEND_DOMAIN`       | Дозволений CORS-origin фронтенду | Так         |
-| `CLOUDINARY_CLOUD_NAME` | Ім'я хмари Cloudinary            | Так         |
-| `CLOUDINARY_API_KEY`    | API-ключ Cloudinary              | Так         |
-| `CLOUDINARY_API_SECRET` | API-секрет Cloudinary            | Так         |
+| Variable                | Purpose                          | Required |
+| ----------------------- | -------------------------------- | -------- |
+| `PORT`                  | HTTP server port, e.g. `3000`    | Yes      |
+| `NODE_ENV`              | `development` / `production`     | Yes      |
+| `MONGO_URL`             | MongoDB connection string        | Yes      |
+| `FRONTEND_DOMAIN`       | Allowed frontend CORS origin     | Yes      |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name            | Yes      |
+| `CLOUDINARY_API_KEY`    | Cloudinary API key               | Yes      |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret            | Yes      |
 
-> Файл `.env` не зберігається в репозиторії. Для production використовуйте менеджер секретів хостинг-платформи.
+> The `.env` file is not stored in the repository. In production, use your hosting platform's secrets manager.
 
-## 7. Скрипти
+## 7. Scripts
 
-| Команда       | Дія                                          |
-| ------------- | -------------------------------------------- |
-| `npm start`   | Продуктивний запуск: `node src/server.js`    |
-| `npm run dev` | Розробницький запуск з автоперезавантаженням |
-| `npm test`    | Не налаштовано (заплановано)                 |
+| Command       | Action                                      |
+| ------------- | ------------------------------------------- |
+| `npm start`   | Production start: `node src/server.js`      |
+| `npm run dev` | Development start with auto-reload          |
+| `npm test`    | Not configured yet (planned)                |
 
-## 8. Огляд API
+## 8. API overview
 
-Базовий URL: `/api`. Формат обміну: JSON. Авторизація: cookies `sessionId`, `accessToken`, `refreshToken`.
+Base URL: `/api`. Data format: JSON. Authorisation: `sessionId`, `accessToken`, `refreshToken` cookies.
 
-### 8.1 Автентифікація — `/api/auth`
+### 8.1 Authentication — `/api/auth`
 
-| Метод | Ендпоїнт    | Доступ    | Тіло запиту                 |
-| ----- | ----------- | --------- | --------------------------- |
-| POST  | `/register` | Публічний | `{ name, email, password }` |
-| POST  | `/login`    | Публічний | `{ email, password }`       |
-| POST  | `/refresh`  | Cookie    | —                           |
-| POST  | `/logout`   | Приватний | —                           |
+| Method | Endpoint    | Access  | Request body                |
+| ------ | ----------- | ------- | --------------------------- |
+| POST   | `/register` | Public  | `{ name, email, password }` |
+| POST   | `/login`    | Public  | `{ email, password }`       |
+| POST   | `/refresh`  | Cookie  | —                           |
+| POST   | `/logout`   | Private | —                           |
 
-Приклад реєстрації:
+Sign-up example:
 
 ```bash
 curl -X POST https://relax-map-back-z38k.onrender.com/api/auth/register \
   -H "Content-Type: application/json" \
   -c cookies.txt \
-  -d '{"name":"Олена","email":"olena@example.com","password":"SecurePass123"}'
+  -d '{"name":"Olena","email":"olena@example.com","password":"SecurePass123"}'
 ```
 
-### 8.2 Локації — `/api/locations`
+### 8.2 Locations — `/api/locations`
 
-| Метод | Ендпоїнт       | Доступ    | Опис                                                               |
-| ----- | -------------- | --------- | ------------------------------------------------------------------ |
-| GET   | `/`            | Публічний | Список: `page, limit, region, type, search, sortBy, sortDirection` |
-| GET   | `/:locationId` | Публічний | Деталі локації                                                     |
-| POST  | `/`            | Приватний | Створення + `multipart/form-data image`                            |
-| PATCH | `/:locationId` | Приватний | Оновлення полів та фото                                            |
+| Method | Endpoint       | Access  | Description                                                        |
+| ------ | -------------- | ------- | ------------------------------------------------------------------ |
+| GET    | `/`            | Public  | List: `page, limit, region, type, search, sortBy, sortDirection`   |
+| GET    | `/:locationId` | Public  | Location details                                                   |
+| POST   | `/`            | Private | Create + `multipart/form-data image`                               |
+| PATCH  | `/:locationId` | Private | Update fields and photo                                            |
 
-Приклад пошуку:
+Search example:
 
 ```bash
-curl "https://relax-map-back-z38k.onrender.com//api/locations?search=Карпати&region=Івано-Франківська&type=Гори&page=1&limit=10&sortBy=rate&sortDirection=desc"
+curl "https://relax-map-back-z38k.onrender.com/api/locations?search=Карпати&region=Івано-Франківська&type=Гори&page=1&limit=10&sortBy=rate&sortDirection=desc"
 ```
 
-### 8.3 Користувачі — `/api/users`
+### 8.3 Users — `/api/users`
 
-| Метод | Ендпоїнт             | Доступ    | Опис                                     |
-| ----- | -------------------- | --------- | ---------------------------------------- |
-| GET   | `/current`           | Приватний | Поточний користувач                      |
-| GET   | `/:userId`           | Публічний | Публічний профіль                        |
-| GET   | `/:userId/locations` | Публічний | Локації автора з пагінацією              |
-| PATCH | `/me/avatar`         | Приватний | Оновлення `name` та `avatar` (multipart) |
+| Method | Endpoint             | Access  | Description                              |
+| ------ | -------------------- | ------- | ---------------------------------------- |
+| GET    | `/current`           | Private | Current user                             |
+| GET    | `/:userId`           | Public  | Public profile                           |
+| GET    | `/:userId/locations` | Public  | Author's locations with pagination       |
+| PATCH  | `/me/avatar`         | Private | Update `name` and `avatar` (multipart)   |
 
-### 8.4 Категорії — `/api/categories`
+### 8.4 Categories — `/api/categories`
 
-| Метод | Ендпоїнт   | Опис         |
-| ----- | ---------- | ------------ |
-| GET   | `/types`   | Типи локацій |
-| GET   | `/regions` | Регіони      |
+| Method | Endpoint   | Description    |
+| ------ | ---------- | -------------- |
+| GET    | `/types`   | Location types |
+| GET    | `/regions` | Regions        |
 
-### 8.5 Відгуки — `/api/feedbacks`
+### 8.5 Feedback — `/api/feedbacks`
 
-| Метод | Ендпоїнт                      | Доступ    | Опис                         |
-| ----- | ----------------------------- | --------- | ---------------------------- |
-| GET   | `/?page=1&limit=3`            | Публічний | Усі відгуки                  |
-| GET   | `/:locationId?page=1&limit=3` | Публічний | Відгуки локації              |
-| POST  | `/:locationId`                | Приватний | `{ rate: 1-5, description }` |
+| Method | Endpoint                      | Access  | Description                  |
+| ------ | ----------------------------- | ------- | ---------------------------- |
+| GET    | `/?page=1&limit=3`            | Public  | All reviews                  |
+| GET    | `/:locationId?page=1&limit=3` | Public  | Reviews for a location       |
+| POST   | `/:locationId`                | Private | `{ rate: 1-5, description }` |
 
-Успішні відповіді: `200 OK`, створення — `201 Created`. Помилки повертаються у стандартизованому форматі `http-errors` та Celebrate.
+Successful responses: `200 OK`; creation: `201 Created`. Errors are returned in the standard `http-errors` and Celebrate format.
 
-## 9. Автентифікація та безпека
+## 9. Authentication and security
 
-- Хешування паролів bcrypt (10 раундів).
-- Access-токен: 15 хвилин. Refresh-токен: 1 доба з ротацією (стара сесія видаляється).
+- Passwords hashed with bcrypt (10 rounds).
+- Access token: 15 minutes. Refresh token: 1 day, with rotation (the old session is deleted).
 - Cookies: `httpOnly, Secure, SameSite=None`.
-- Захист заголовків — Helmet. CORS — лише для `FRONTEND_DOMAIN` з `credentials: true`.
-- Валідація email за regex, пароля — 8–128 символів, ObjectId — через Mongoose-хелпер.
-- Пароль вилучається з відповідей API на рівні моделі.
+- Header protection with Helmet. CORS is limited to `FRONTEND_DOMAIN` with `credentials: true`.
+- Email validated by regex, password length 8–128 characters, ObjectId via a Mongoose helper.
+- The password is excluded from API responses at the model level.
 
-Рекомендації для production: HTTPS обов'язково, додати rate-limit на `/api/auth`, аудит CORS-доменів.
+Production recommendations: HTTPS is required; add rate limiting on `/api/auth`; audit CORS domains.
 
-## 10. Моделі даних
+## 10. Data models
 
 - **User:** `name, email (unique), password (hash), avatarUrl, articlesAmount`, timestamps.
 - **Location:** `image, name (3-96), description (20-6000), locationType, region, rate (0-5), ownerId, feedbacksId[], feedbacksCount, coordinates {lat, lon}`, timestamps.
@@ -214,44 +217,44 @@ curl "https://relax-map-back-z38k.onrender.com//api/locations?search=Карпа�
 - **Region:** `region, slug, level, note`.
 - **Session:** `userId, accessToken, refreshToken, accessTokenValidUntil, refreshTokenValidUntil`.
 
-## 11. Завантаження файлів
+## 11. File uploads
 
-Multer у режимі memory storage → буфер передається до Cloudinary:
+Multer in memory storage mode → the buffer is sent to Cloudinary:
 
-- аватари: `relax-map/avatars`, 500×500, `fill`, `gravity:auto`;
-- фото локацій: `relax-map/locations`, 750×500;
-- автооптимізація: `fetch_format:auto, quality:auto`.
+- avatars: `relax-map/avatars`, 500×500, `fill`, `gravity:auto`;
+- location photos: `relax-map/locations`, 750×500;
+- auto-optimisation: `fetch_format:auto, quality:auto`.
 
-Обмеження типів для оновлення локацій: `image/jpeg, image/jpg, image/png`.
+Allowed file types for location updates: `image/jpeg, image/jpg, image/png`.
 
-## 12. Обробка помилок та логування
+## 12. Error handling and logging
 
-- `notFoundHandler` — для невідомих маршрутів (404).
-- `celebrate errors()` — помилки валідації (400).
-- `errorHandler` — централізований формат помилок.
-- `pino-http` — структуроване логування запитів.
+- `notFoundHandler` — for unknown routes (404).
+- `celebrate errors()` — validation errors (400).
+- `errorHandler` — centralised error format.
+- `pino-http` — structured request logging.
 
-## 13. Розгортання
+## 13. Deployment
 
-1. Встановіть змінні оточення на хостингу (Render / Railway / VPS).
-2. Відкрийте доступ до MongoDB Atlas за IP або VPC.
-3. Налаштуйте HTTPS (обов'язково для `Secure` cookies).
-4. Команда запуску: `npm install && npm start`.
-5. Health-check: `GET /api/categories/types` має повертати `200`.
+1. Set the environment variables on your hosting platform (Render / Railway / VPS).
+2. Allow MongoDB Atlas access by IP or VPC.
+3. Set up HTTPS (required for `Secure` cookies).
+4. Start command: `npm install && npm start`.
+5. Health check: `GET /api/categories/types` should return `200`.
 
-## 14. Команда проєкту
+## 14. Project team
 
-Проєкт реалізовано командою з 12 учасників.
+The project was built by a team of 12 members.
 
-- **[stanislave-droid](https://github.com/stanislave-droid)** — власник репозиторію, Team Lead. Користувачі, локації, автентифікація, Cloudinary / Multer, сортування та виправлення.
-- **[Ellen-HI](https://github.com/Ellen-HI)** — оновлення сесії, модель та сервіс сесій, виправлення сесій, оновлення користувача.
-- **[LiliaMamutova](https://github.com/LiliaMamutova)** — модель користувача, повідомлення про помилки реєстрації.
-- **[Viktor-8888](https://github.com/Viktor-8888)** — профіль поточного користувача.
-- **[Roman-Bieloshchuk](https://github.com/Roman-Bieloshchuk)** — вихід із системи.
-- **[HyriaRoman](https://github.com/HyriaRoman)** — локації користувача.
-- **[OlgaDovgal](https://github.com/OlgaDovgal)** — створення локацій, отримання локації за ідентифікатором, виправлення контролера.
-- **[oleksandr0681](https://github.com/oleksandr0681)** — валідація оновлення локацій, налаштування Multer, роутер локацій.
-- **[KateB713](https://github.com/KateB713)** — типи категорій та формат відповіді категорій.
-- **[LaraMach](https://github.com/LaraMach)** — регіони та лічильник відгуків.
-- **[AnastasiiaAghfir](https://github.com/AnastasiiaAghfir)** — отримання відгуків.
-- **[Guijeen](https://github.com/Guijeen)** — отримання останніх відгуків, створення нового відгука локаціі.
+- **[stanislave-droid](https://github.com/stanislave-droid)** — repository owner, Team Lead. Users, locations, authentication, Cloudinary / Multer, sorting and fixes.
+- **[Ellen-HI](https://github.com/Ellen-HI)** — session refresh, session model and service, session fixes, user update.
+- **[LiliaMamutova](https://github.com/LiliaMamutova)** — user model, sign-up error messages.
+- **[Viktor-8888](https://github.com/Viktor-8888)** — current user profile.
+- **[Roman-Bieloshchuk](https://github.com/Roman-Bieloshchuk)** — logout.
+- **[HyriaRoman](https://github.com/HyriaRoman)** — user's locations.
+- **[OlgaDovgal](https://github.com/OlgaDovgal)** — creating locations, getting a location by ID, controller fixes.
+- **[oleksandr0681](https://github.com/oleksandr0681)** — location update validation, Multer setup, locations router.
+- **[KateB713](https://github.com/KateB713)** — category types and category response format.
+- **[LaraMach](https://github.com/LaraMach)** — regions and review counter.
+- **[AnastasiiaAghfir](https://github.com/AnastasiiaAghfir)** — getting reviews.
+- **[Guijeen](https://github.com/Guijeen)** — getting the latest reviews, creating a new location review.
